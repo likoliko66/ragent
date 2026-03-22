@@ -33,5 +33,5 @@ public class IntentNodeBatchRequest {
     /**
      * 节点 ID 列表
      */
-    private List<Long> ids;
+    private List<String> ids;
 }

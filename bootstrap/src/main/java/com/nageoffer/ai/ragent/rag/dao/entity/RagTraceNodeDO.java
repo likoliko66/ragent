@@ -41,7 +41,7 @@ import java.util.Date;
 public class RagTraceNodeDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     private String traceId;
 

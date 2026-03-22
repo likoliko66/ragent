@@ -45,7 +45,7 @@ public class ConversationMessageDO {
      * 主键 ID，采用雪花算法生成
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 会话 ID，关联到具体的对话会话

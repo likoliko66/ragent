@@ -70,7 +70,7 @@ public class SaTokenStpInterfaceImpl implements StpInterface {
             return Collections.emptyList();
         }
 
-        UserDO user = userMapper.selectById(Long.parseLong(loginIdStr));
+        UserDO user = userMapper.selectById(loginIdStr);
         if (user == null || StrUtil.isBlank(user.getRole())) {
             return Collections.emptyList();
         }

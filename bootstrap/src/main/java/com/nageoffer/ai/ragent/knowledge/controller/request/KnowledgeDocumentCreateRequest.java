@@ -25,7 +25,7 @@ public class KnowledgeDocumentCreateRequest {
     /**
      * 所属知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 文档名称

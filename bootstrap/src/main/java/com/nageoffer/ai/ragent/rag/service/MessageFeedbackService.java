@@ -55,5 +55,5 @@ public interface MessageFeedbackService {
      * @param messageIds 消息ID列表
      * @return messageId -> vote
      */
-    Map<Long, Integer> getUserVotes(String userId, List<Long> messageIds);
+    Map<String, Integer> getUserVotes(String userId, List<String> messageIds);
 }

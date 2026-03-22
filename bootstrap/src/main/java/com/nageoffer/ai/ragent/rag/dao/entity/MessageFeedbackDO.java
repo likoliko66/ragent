@@ -45,12 +45,12 @@ public class MessageFeedbackDO {
      * 主键 ID，采用雪花算法生成
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 消息 ID，关联到会话消息
      */
-    private Long messageId;
+    private String messageId;
 
     /**
      * 会话 ID

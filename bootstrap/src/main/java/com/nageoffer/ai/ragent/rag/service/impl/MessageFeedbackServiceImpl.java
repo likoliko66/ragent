@@ -86,7 +86,7 @@ public class MessageFeedbackServiceImpl implements MessageFeedbackService {
     }
 
     @Override
-    public Map<Long, Integer> getUserVotes(String userId, List<Long> messageIds) {
+    public Map<String, Integer> getUserVotes(String userId, List<String> messageIds) {
         if (StrUtil.isBlank(userId) || CollUtil.isEmpty(messageIds)) {
             return Collections.emptyMap();
         }
@@ -130,7 +130,7 @@ public class MessageFeedbackServiceImpl implements MessageFeedbackService {
 
         if (existing == null) {
             MessageFeedbackDO feedback = MessageFeedbackDO.builder()
-                    .messageId(Long.parseLong(messageId))
+                    .messageId(messageId)
                     .conversationId(conversationId)
                     .userId(userId)
                     .vote(vote)

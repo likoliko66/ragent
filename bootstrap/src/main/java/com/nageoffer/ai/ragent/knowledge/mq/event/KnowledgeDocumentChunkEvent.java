@@ -45,7 +45,7 @@ public class KnowledgeDocumentChunkEvent implements Serializable {
     /**
      * 知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 操作人

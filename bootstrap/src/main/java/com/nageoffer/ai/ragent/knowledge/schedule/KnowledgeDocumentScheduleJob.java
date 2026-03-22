@@ -139,7 +139,7 @@ public class KnowledgeDocumentScheduleJob {
         }
     }
 
-    private void executeSchedule(Long scheduleId) {
+    private void executeSchedule(String scheduleId) {
         Date startTime = new Date();
         KnowledgeDocumentScheduleDO schedule = scheduleMapper.selectById(scheduleId);
         if (schedule == null) {
@@ -326,7 +326,7 @@ public class KnowledgeDocumentScheduleJob {
     }
 
     private void markScheduleSkipped(KnowledgeDocumentScheduleDO schedule,
-                                     Long execId,
+                                     String execId,
                                      Date startTime,
                                      Date nextRunTime,
                                      RemoteFetchResult fetchResult) {
@@ -357,7 +357,7 @@ public class KnowledgeDocumentScheduleJob {
     }
 
     private void markScheduleSuccess(KnowledgeDocumentScheduleDO schedule,
-                                     Long execId,
+                                     String execId,
                                      Date startTime,
                                      Date nextRunTime,
                                      RemoteFetchResult fetchResult,
@@ -392,7 +392,7 @@ public class KnowledgeDocumentScheduleJob {
     }
 
     private void markScheduleFailed(KnowledgeDocumentScheduleDO schedule,
-                                    Long execId,
+                                    String execId,
                                     Date startTime,
                                     Date nextRunTime,
                                     String errorMessage) {
@@ -426,7 +426,7 @@ public class KnowledgeDocumentScheduleJob {
         scheduleMapper.updateById(update);
     }
 
-    private boolean tryAcquireLock(Long scheduleId, Date now, Date lockUntil) {
+    private boolean tryAcquireLock(String scheduleId, Date now, Date lockUntil) {
         UpdateWrapper<KnowledgeDocumentScheduleDO> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", scheduleId)
                 .and(wrapper -> wrapper.isNull("lock_until").or().lt("lock_until", now));
@@ -436,7 +436,7 @@ public class KnowledgeDocumentScheduleJob {
         return scheduleMapper.update(update, updateWrapper) > 0;
     }
 
-    private void releaseLock(Long scheduleId) {
+    private void releaseLock(String scheduleId) {
         UpdateWrapper<KnowledgeDocumentScheduleDO> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", scheduleId).eq("lock_owner", instanceId);
         KnowledgeDocumentScheduleDO update = new KnowledgeDocumentScheduleDO();
@@ -445,7 +445,7 @@ public class KnowledgeDocumentScheduleJob {
         scheduleMapper.update(update, updateWrapper);
     }
 
-    private void renewLock(Long scheduleId) {
+    private void renewLock(String scheduleId) {
         if (scheduleId == null) {
             return;
         }

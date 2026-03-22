@@ -13,11 +13,11 @@ spring:
       max-request-size: 100MB
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     type: com.zaxxer.hikari.HikariDataSource
-    username: root
-    password: root
-    url: jdbc:mysql://127.0.0.1:3306/ragent?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://127.0.0.1:5432/ragent?client_encoding=UTF8
     hikari:
       connection-timeout: 5000
       idle-timeout: 600000
@@ -36,9 +36,12 @@ milvus:
   uri: http://localhost:19530
 
 rag:
+  vector:
+    type: pg  # 可选 milvus / pg
+
   default:
     collection-name: rag_default_store
-    dimension: 4096
+    dimension: 1024
     metric-type: COSINE
 
   query-rewrite:
@@ -143,12 +146,12 @@ ai:
       - id: qwen-emb-8b
         provider: siliconflow
         model: Qwen/Qwen3-Embedding-8B
-        dimension: 4096
+        dimension: 1024
         priority: 1
       - id: qwen-emb-local
         provider: ollama
         model: qwen3-embedding:8b-fp16
-        dimension: 4096
+        dimension: 1024
         priority: 2
 
   rerank:

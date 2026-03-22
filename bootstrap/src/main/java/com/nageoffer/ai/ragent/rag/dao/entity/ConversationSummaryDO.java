@@ -46,7 +46,7 @@ public class ConversationSummaryDO {
      * 主键 ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 会话 ID
@@ -66,7 +66,7 @@ public class ConversationSummaryDO {
     /**
      * 摘要覆盖的最后一条消息 ID
      */
-    private Long lastMessageId;
+    private String lastMessageId;
 
     /**
      * 创建时间

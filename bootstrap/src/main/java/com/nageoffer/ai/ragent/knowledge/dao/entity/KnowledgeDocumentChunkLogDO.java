@@ -40,12 +40,12 @@ import java.util.Date;
 public class KnowledgeDocumentChunkLogDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 文档 ID
      */
-    private Long docId;
+    private String docId;
 
     /**
      * 执行状态：running / success / failed
@@ -65,7 +65,7 @@ public class KnowledgeDocumentChunkLogDO {
     /**
      * Pipeline ID（仅 pipeline 模式）
      */
-    private Long pipelineId;
+    private String pipelineId;
 
     /**
      * 文本提取耗时（毫秒）

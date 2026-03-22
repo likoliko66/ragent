@@ -56,7 +56,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     }
 
     @Override
-    public List<ConversationMessageDO> listMessagesBetweenIds(String conversationId, String userId, Long afterId, Long beforeId) {
+    public List<ConversationMessageDO> listMessagesBetweenIds(String conversationId, String userId, String afterId, String beforeId) {
         if (StrUtil.isBlank(conversationId) || StrUtil.isBlank(userId)) {
             return List.of();
         }
@@ -77,7 +77,7 @@ public class ConversationGroupServiceImpl implements ConversationGroupService {
     }
 
     @Override
-    public Long findMaxMessageIdAtOrBefore(String conversationId, String userId, java.util.Date at) {
+    public String findMaxMessageIdAtOrBefore(String conversationId, String userId, java.util.Date at) {
         if (StrUtil.isBlank(conversationId) || StrUtil.isBlank(userId) || at == null) {
             return null;
         }

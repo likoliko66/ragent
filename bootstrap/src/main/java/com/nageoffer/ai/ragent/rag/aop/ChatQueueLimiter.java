@@ -328,7 +328,7 @@ public class ChatQueueLimiter {
         boolean isNewConversation = conversationGroupService.findConversation(actualConversationId, userId) == null;
 
         memoryService.append(actualConversationId, userId, ChatMessage.user(question));
-        Long messageId = memoryService.append(actualConversationId, userId, ChatMessage.assistant(REJECT_MESSAGE));
+        String messageId = memoryService.append(actualConversationId, userId, ChatMessage.assistant(REJECT_MESSAGE));
 
         String title = isNewConversation ? resolveTitle(actualConversationId, userId) : "";
         if (isNewConversation && StrUtil.isBlank(title)) {
@@ -371,7 +371,7 @@ public class ChatQueueLimiter {
         sender.complete();
     }
 
-    private record RejectedContext(String conversationId, String taskId, Long messageId, String title) {
+    private record RejectedContext(String conversationId, String taskId, String messageId, String title) {
     }
 
     private record ClaimResult(boolean claimed, double score) {

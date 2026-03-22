@@ -131,13 +131,13 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
             if (latestUserTurns.isEmpty()) {
                 return;
             }
-            Long cutoffId = resolveCutoffId(latestUserTurns);
-            if (cutoffId == null) {
+            String cutoffId = resolveCutoffId(latestUserTurns);
+            if (StrUtil.isBlank(cutoffId)) {
                 return;
             }
 
-            Long afterId = resolveSummaryStartId(conversationId, userId, latestSummary);
-            if (afterId != null && afterId >= cutoffId) {
+            String afterId = resolveSummaryStartId(conversationId, userId, latestSummary);
+            if (afterId != null && Long.parseLong(afterId) >= Long.parseLong(cutoffId)) {
                 return;
             }
 
@@ -151,8 +151,8 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
                 return;
             }
 
-            Long lastMessageId = resolveLastMessageId(toSummarize);
-            if (lastMessageId == null) {
+            String lastMessageId = resolveLastMessageId(toSummarize);
+            if (StrUtil.isBlank(lastMessageId)) {
                 return;
             }
 
@@ -254,7 +254,7 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
         return new ChatMessage(ChatMessage.Role.SYSTEM, record.getContent());
     }
 
-    private Long resolveSummaryStartId(String conversationId, String userId, ConversationSummaryDO summary) {
+    private String resolveSummaryStartId(String conversationId, String userId, ConversationSummaryDO summary) {
         if (summary == null) {
             return null;
         }
@@ -269,7 +269,7 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
         return conversationGroupService.findMaxMessageIdAtOrBefore(conversationId, userId, after);
     }
 
-    private Long resolveCutoffId(List<ConversationMessageDO> latestUserTurns) {
+    private String resolveCutoffId(List<ConversationMessageDO> latestUserTurns) {
         if (CollUtil.isEmpty(latestUserTurns)) {
             return null;
         }
@@ -279,7 +279,7 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
         return oldest == null ? null : oldest.getId();
     }
 
-    private Long resolveLastMessageId(List<ConversationMessageDO> toSummarize) {
+    private String resolveLastMessageId(List<ConversationMessageDO> toSummarize) {
         for (int i = toSummarize.size() - 1; i >= 0; i--) {
             ConversationMessageDO item = toSummarize.get(i);
             if (item != null && item.getId() != null) {
@@ -292,7 +292,7 @@ public class MySQLConversationMemorySummaryService implements ConversationMemory
     private void createSummary(String conversationId,
                                String userId,
                                String content,
-                               Long lastMessageId) {
+                               String lastMessageId) {
         ConversationSummaryBO summaryRecord = ConversationSummaryBO.builder()
                 .conversationId(conversationId)
                 .userId(userId)

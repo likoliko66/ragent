@@ -150,7 +150,7 @@ public class IngestionPipelineServiceImpl implements IngestionPipelineService {
                 .build();
     }
 
-    private void upsertNodes(Long pipelineId, List<IngestionPipelineNodeRequest> nodes) {
+    private void upsertNodes(String pipelineId, List<IngestionPipelineNodeRequest> nodes) {
         if (nodes == null) {
             return;
         }
@@ -175,7 +175,7 @@ public class IngestionPipelineServiceImpl implements IngestionPipelineService {
         }
     }
 
-    private List<IngestionPipelineNodeDO> fetchNodes(Long pipelineId) {
+    private List<IngestionPipelineNodeDO> fetchNodes(String pipelineId) {
         LambdaQueryWrapper<IngestionPipelineNodeDO> qw = new LambdaQueryWrapper<IngestionPipelineNodeDO>()
                 .eq(IngestionPipelineNodeDO::getPipelineId, pipelineId)
                 .eq(IngestionPipelineNodeDO::getDeleted, 0);

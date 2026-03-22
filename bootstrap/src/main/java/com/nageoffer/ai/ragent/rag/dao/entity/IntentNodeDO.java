@@ -38,12 +38,12 @@ import java.util.Date;
 public class IntentNodeDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 业务唯一标识，如 group-hr / biz-oa-intro

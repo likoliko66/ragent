@@ -41,7 +41,7 @@ import java.util.Date;
 public class RagTraceRunDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 全局链路ID

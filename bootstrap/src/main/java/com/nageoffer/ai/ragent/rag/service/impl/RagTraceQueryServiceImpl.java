@@ -123,9 +123,8 @@ public class RagTraceQueryServiceImpl implements RagTraceQueryService {
             return Collections.emptyMap();
         }
 
-        Set<Long> userIds = runs.stream()
+        Set<String> userIds = runs.stream()
                 .map(RagTraceRunDO::getUserId)
-                .map(this::safeParseLong)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
         if (userIds.isEmpty()) {
@@ -151,17 +150,6 @@ public class RagTraceQueryServiceImpl implements RagTraceQueryService {
             return null;
         }
         return usernameMap.get(userId);
-    }
-
-    private Long safeParseLong(String value) {
-        if (StrUtil.isBlank(value)) {
-            return null;
-        }
-        try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
     }
 
     private RagTraceNodeVO toNodeVO(RagTraceNodeDO node) {

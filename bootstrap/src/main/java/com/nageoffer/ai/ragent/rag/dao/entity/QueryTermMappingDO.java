@@ -29,7 +29,7 @@ import java.util.Date;
 public class QueryTermMappingDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 业务域/系统标识，如biz、group、data_security等，可选

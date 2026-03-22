@@ -44,17 +44,17 @@ public class IngestionTaskNodeDO {
      * ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 任务ID
      */
-    private Long taskId;
+    private String taskId;
 
     /**
      * 流水线ID
      */
-    private Long pipelineId;
+    private String pipelineId;
 
     /**
      * 节点ID

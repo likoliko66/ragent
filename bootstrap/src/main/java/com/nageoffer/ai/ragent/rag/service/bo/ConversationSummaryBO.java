@@ -49,5 +49,5 @@ public class ConversationSummaryBO {
     /**
      * 摘要覆盖的最后一条消息 ID
      */
-    private Long lastMessageId;
+    private String lastMessageId;
 }

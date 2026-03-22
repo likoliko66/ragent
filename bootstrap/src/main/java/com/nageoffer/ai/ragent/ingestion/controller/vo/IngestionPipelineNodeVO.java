@@ -23,7 +23,7 @@ import lombok.Data;
 @Data
 public class IngestionPipelineNodeVO {
 
-    private Long id;
+    private String id;
 
     private String nodeId;
 

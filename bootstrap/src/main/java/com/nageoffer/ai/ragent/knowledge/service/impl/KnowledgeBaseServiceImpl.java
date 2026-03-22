@@ -206,9 +206,9 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
 
         Page<KnowledgeBaseDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
         IPage<KnowledgeBaseDO> result = knowledgeBaseMapper.selectPage(page, queryWrapper);
-        Map<Long, Long> docCountMap = new HashMap<>();
+        Map<String, Long> docCountMap = new HashMap<>();
         if (CollUtil.isNotEmpty(result.getRecords())) {
-            List<Long> kbIds = result.getRecords().stream()
+            List<String> kbIds = result.getRecords().stream()
                     .map(KnowledgeBaseDO::getId)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
@@ -226,9 +226,10 @@ public class KnowledgeBaseServiceImpl implements KnowledgeBaseService {
                     if (kbIdValue == null) {
                         continue;
                     }
-                    Long kbId = kbIdValue instanceof Number
-                            ? ((Number) kbIdValue).longValue()
-                            : Long.parseLong(kbIdValue.toString());
+
+                    String kbId = kbIdValue instanceof Number
+                            ? String.valueOf(((Number) kbIdValue).longValue())
+                            : kbIdValue.toString();
                     Long count = countValue instanceof Number
                             ? ((Number) countValue).longValue()
                             : countValue != null ? Long.parseLong(countValue.toString()) : 0L;

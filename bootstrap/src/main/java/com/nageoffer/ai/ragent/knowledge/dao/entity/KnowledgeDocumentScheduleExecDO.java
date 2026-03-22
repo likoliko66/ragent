@@ -40,22 +40,22 @@ import java.util.Date;
 public class KnowledgeDocumentScheduleExecDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 定时任务 ID
      */
-    private Long scheduleId;
+    private String scheduleId;
 
     /**
      * 文档 ID
      */
-    private Long docId;
+    private String docId;
 
     /**
      * 知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 执行状态

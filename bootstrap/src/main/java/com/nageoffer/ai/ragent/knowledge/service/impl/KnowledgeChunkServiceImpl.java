@@ -129,9 +129,9 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
         Integer tokenCount = resolveTokenCount(content);
 
         KnowledgeChunkDO chunkDO = KnowledgeChunkDO.builder()
-                .id(Long.parseLong(requestParam.getChunkId()))
+                .id(requestParam.getChunkId())
                 .kbId(documentDO.getKbId())
-                .docId(Long.parseLong(docId))
+                .docId(docId)
                 .chunkIndex(chunkIndex)
                 .content(content)
                 .contentHash(contentHash)
@@ -178,8 +178,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
             nextIndex = latest != null && latest.getChunkIndex() != null ? latest.getChunkIndex() + 1 : 0;
         }
 
-        Long docIdLong = Long.parseLong(docId);
-        Long kbId = documentDO.getKbId();
+        String kbId = documentDO.getKbId();
         String username = UserContext.getUsername();
         String embeddingModel = resolveEmbeddingModel(kbId);
         List<KnowledgeChunkDO> chunkDOList = new ArrayList<>(requestParams.size());
@@ -199,9 +198,9 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
             }
 
             KnowledgeChunkDO chunkDO = KnowledgeChunkDO.builder()
-                    .id(Long.parseLong(chunkId))
+                    .id(chunkId)
                     .kbId(kbId)
-                    .docId(docIdLong)
+                    .docId(docId)
                     .chunkIndex(chunkIndex)
                     .content(content)
                     .contentHash(calculateHash(content))
@@ -240,7 +239,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
 
         KnowledgeChunkDO chunkDO = chunkMapper.selectById(chunkId);
         Assert.notNull(chunkDO, () -> new ClientException("Chunk 不存在"));
-        Assert.isTrue(chunkDO.getDocId().equals(Long.parseLong(docId)), () -> new ClientException("Chunk 不属于该文档"));
+        Assert.isTrue(chunkDO.getDocId().equals(docId), () -> new ClientException("Chunk 不属于该文档"));
 
         String newContent = requestParam.getContent();
         Assert.notBlank(newContent, () -> new ClientException("Chunk 内容不能为空"));
@@ -282,7 +281,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
 
         KnowledgeChunkDO chunkDO = chunkMapper.selectById(chunkId);
         Assert.notNull(chunkDO, () -> new ClientException("Chunk 不存在"));
-        Assert.isTrue(chunkDO.getDocId().equals(Long.parseLong(docId)), () -> new ClientException("Chunk 不属于该文档"));
+        Assert.isTrue(chunkDO.getDocId().equals(docId), () -> new ClientException("Chunk 不属于该文档"));
 
         chunkMapper.deleteById(chunkId);
 
@@ -301,7 +300,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
 
         KnowledgeChunkDO chunkDO = chunkMapper.selectById(chunkId);
         Assert.notNull(chunkDO, () -> new ClientException("Chunk 不存在"));
-        Assert.isTrue(chunkDO.getDocId().equals(Long.parseLong(docId)), () -> new ClientException("Chunk 不属于该文档"));
+        Assert.isTrue(chunkDO.getDocId().equals(docId), () -> new ClientException("Chunk 不属于该文档"));
 
         // 如果状态没变，直接返回
         int enabledValue = enabled ? 1 : 0;
@@ -447,14 +446,14 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
             chunks = chunkMapper.selectByIds(requestParam.getChunkIds());
             // 校验所有 chunk 都属于该文档
             chunks.forEach(c -> {
-                if (!c.getDocId().equals(Long.parseLong(docId))) {
+                if (!c.getDocId().equals(docId)) {
                     throw new ClientException("Chunk " + c.getId() + " 不属于文档 " + docId);
                 }
             });
         }
 
         int enabledValue = enabled ? 1 : 0;
-        List<Long> needUpdateIds = new ArrayList<>();
+        List<String> needUpdateIds = new ArrayList<>();
 
         for (KnowledgeChunkDO chunk : chunks) {
             if (!chunk.getEnabled().equals(enabledValue)) {
@@ -471,7 +470,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
         if (enabled) {
             doRebuildByDocId(docId);
         } else {
-            for (Long chunkId : needUpdateIds) {
+            for (String chunkId : needUpdateIds) {
                 deleteChunkFromMilvus(kbId, String.valueOf(chunkId));
             }
         }
@@ -571,7 +570,7 @@ public class KnowledgeChunkServiceImpl implements KnowledgeChunkService {
                 : embeddingService.embedBatch(texts, embeddingModel);
     }
 
-    private String resolveEmbeddingModel(Long kbId) {
+    private String resolveEmbeddingModel(String kbId) {
         if (kbId == null) {
             return null;
         }

@@ -35,7 +35,7 @@ public class KnowledgeDocumentVO {
     /**
      * 知识库ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 文档名称

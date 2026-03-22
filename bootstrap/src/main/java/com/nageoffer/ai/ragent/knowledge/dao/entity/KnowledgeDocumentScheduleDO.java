@@ -40,17 +40,17 @@ import java.util.Date;
 public class KnowledgeDocumentScheduleDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 文档 ID
      */
-    private Long docId;
+    private String docId;
 
     /**
      * 知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 定时表达式

@@ -49,7 +49,7 @@ public interface ConversationGroupService {
      * @param beforeId       结束消息ID（不包含）
      * @return 指定范围内的消息列表
      */
-    List<ConversationMessageDO> listMessagesBetweenIds(String conversationId, String userId, Long afterId, Long beforeId);
+    List<ConversationMessageDO> listMessagesBetweenIds(String conversationId, String userId, String afterId, String beforeId);
 
     /**
      * 查找指定时间点之前或当时的最大消息ID
@@ -59,7 +59,7 @@ public interface ConversationGroupService {
      * @param at             指定的时间点
      * @return 最大消息ID，如果不存在则返回null
      */
-    Long findMaxMessageIdAtOrBefore(String conversationId, String userId, Date at);
+    String findMaxMessageIdAtOrBefore(String conversationId, String userId, Date at);
 
     /**
      * 统计用户在指定对话中的消息数量

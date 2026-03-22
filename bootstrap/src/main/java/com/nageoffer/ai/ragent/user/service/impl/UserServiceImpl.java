@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
         LoginUser loginUser = UserContext.requireUser();
         UserDO record = userMapper.selectOne(
                 Wrappers.lambdaQuery(UserDO.class)
-                        .eq(UserDO::getId, parseId(loginUser.getUserId()))
+                        .eq(UserDO::getId, loginUser.getUserId())
                         .eq(UserDO::getDeleted, 0)
         );
         Assert.notNull(record, () -> new ClientException("用户不存在"));
@@ -152,10 +152,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserDO loadById(String id) {
-        Long parsedId = parseId(id);
         UserDO record = userMapper.selectOne(
                 Wrappers.lambdaQuery(UserDO.class)
-                        .eq(UserDO::getId, parsedId)
+                        .eq(UserDO::getId, id)
                         .eq(UserDO::getDeleted, 0)
         );
         Assert.notNull(record, () -> new ClientException("用户不存在"));
@@ -168,7 +167,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void ensureUsernameAvailable(String username, Long excludeId) {
+    private void ensureUsernameAvailable(String username, String excludeId) {
         UserDO existing = userMapper.selectOne(
                 Wrappers.lambdaQuery(UserDO.class)
                         .eq(UserDO::getUsername, username)
@@ -192,17 +191,6 @@ public class UserServiceImpl implements UserService {
             return UserRole.USER.getCode();
         }
         throw new ClientException("角色类型不合法");
-    }
-
-    private Long parseId(String id) {
-        if (StrUtil.isBlank(id)) {
-            throw new ClientException("用户ID不能为空");
-        }
-        try {
-            return Long.parseLong(id);
-        } catch (NumberFormatException ex) {
-            throw new ClientException("用户ID非法");
-        }
     }
 
     private boolean passwordMatches(String input, String stored) {

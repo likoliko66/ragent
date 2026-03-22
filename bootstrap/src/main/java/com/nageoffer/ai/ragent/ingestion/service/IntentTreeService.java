@@ -50,17 +50,17 @@ public interface IntentTreeService extends IService<IntentNodeDO> {
     /**
      * 批量启用节点
      */
-    void batchEnableNodes(List<Long> ids);
+    void batchEnableNodes(List<String> ids);
 
     /**
      * 批量停用节点
      */
-    void batchDisableNodes(List<Long> ids);
+    void batchDisableNodes(List<String> ids);
 
     /**
      * 批量删除节点（逻辑删除）
      */
-    void batchDeleteNodes(List<Long> ids);
+    void batchDeleteNodes(List<String> ids);
 
     /**
      * 从 IntentTreeFactory 初始化全量 Tree 到数据库

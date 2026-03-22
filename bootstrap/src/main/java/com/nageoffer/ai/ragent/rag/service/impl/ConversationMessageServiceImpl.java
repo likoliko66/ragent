@@ -50,7 +50,7 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
     private final MessageFeedbackService feedbackService;
 
     @Override
-    public Long addMessage(ConversationMessageBO conversationMessage) {
+    public String addMessage(ConversationMessageBO conversationMessage) {
         ConversationMessageDO messageDO = BeanUtil.toBean(conversationMessage, ConversationMessageDO.class);
         conversationMessageMapper.insert(messageDO);
         return messageDO.getId();
@@ -89,11 +89,11 @@ public class ConversationMessageServiceImpl implements ConversationMessageServic
             Collections.reverse(records);
         }
 
-        List<Long> assistantMessageIds = records.stream()
+        List<String> assistantMessageIds = records.stream()
                 .filter(record -> "assistant".equalsIgnoreCase(record.getRole()))
                 .map(ConversationMessageDO::getId)
                 .toList();
-        Map<Long, Integer> votesByMessageId = feedbackService.getUserVotes(userId, assistantMessageIds);
+        Map<String, Integer> votesByMessageId = feedbackService.getUserVotes(userId, assistantMessageIds);
 
         List<ConversationMessageVO> result = new ArrayList<>();
         for (ConversationMessageDO record : records) {

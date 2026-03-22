@@ -147,7 +147,7 @@ public class IngestionTaskServiceImpl implements IngestionTaskService {
         PipelineDefinition pipeline = pipelineService.getDefinition(resolvedPipelineId);
 
         IngestionTaskDO task = IngestionTaskDO.builder()
-                .pipelineId(Long.parseLong(resolvedPipelineId))
+                .pipelineId(resolvedPipelineId)
                 .sourceType(source.getType() == null ? null : source.getType().getValue())
                 .sourceLocation(source.getLocation())
                 .sourceFileName(source.getFileName())

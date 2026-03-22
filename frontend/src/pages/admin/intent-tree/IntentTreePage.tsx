@@ -798,7 +798,7 @@ function IntentNodeDialog({
                           <FormItem>
                             <FormLabel>Collection 名称</FormLabel>
                             <FormControl>
-                              <Input placeholder="Milvus Collection 名称" {...field} />
+                              <Input placeholder="向量数据库 Collection 名称" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

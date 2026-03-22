@@ -70,7 +70,7 @@ public class UserContextInterceptor implements HandlerInterceptor {
         }
 
         String loginId = StpUtil.getLoginIdAsString();
-        UserDO user = userMapper.selectById(Long.parseLong(loginId));
+        UserDO user = userMapper.selectById(loginId);
 
         UserContext.set(
                 LoginUser.builder()

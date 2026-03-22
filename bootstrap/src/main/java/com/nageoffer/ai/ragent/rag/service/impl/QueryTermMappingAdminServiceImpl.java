@@ -125,21 +125,9 @@ public class QueryTermMappingAdminServiceImpl implements QueryTermMappingAdminSe
     }
 
     private QueryTermMappingDO loadById(String id) {
-        Long parsedId = parseId(id);
-        QueryTermMappingDO record = queryTermMappingMapper.selectById(parsedId);
+        QueryTermMappingDO record = queryTermMappingMapper.selectById(id);
         Assert.notNull(record, () -> new ClientException("映射规则不存在"));
         return record;
-    }
-
-    private Long parseId(String id) {
-        if (StrUtil.isBlank(id)) {
-            throw new ClientException("映射规则ID不能为空");
-        }
-        try {
-            return Long.parseLong(id);
-        } catch (NumberFormatException ex) {
-            throw new ClientException("映射规则ID非法");
-        }
     }
 
     private QueryTermMappingVO toVO(QueryTermMappingDO record) {

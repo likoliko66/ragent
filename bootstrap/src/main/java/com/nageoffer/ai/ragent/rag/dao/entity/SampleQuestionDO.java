@@ -41,7 +41,7 @@ import java.util.Date;
 public class SampleQuestionDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 展示标题（可选）

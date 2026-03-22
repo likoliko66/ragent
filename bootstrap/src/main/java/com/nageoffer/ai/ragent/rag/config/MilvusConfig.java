@@ -20,6 +20,7 @@ package com.nageoffer.ai.ragent.rag.config;
 import io.milvus.v2.client.ConnectConfig;
 import io.milvus.v2.client.MilvusClientV2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,6 +41,7 @@ import org.springframework.context.annotation.Configuration;
  * </pre>
  */
 @Configuration
+@ConditionalOnProperty(name = "rag.vector.type", havingValue = "milvus", matchIfMissing = true)
 public class MilvusConfig {
 
     /**

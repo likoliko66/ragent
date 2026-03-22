@@ -167,7 +167,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         ProcessMode processMode = ProcessMode.normalize(request == null ? null : request.getProcessMode());
         ChunkingMode chunkingMode = null;
         String chunkConfig = null;
-        Long pipelineId = null;
+        String pipelineId = null;
 
         if (ProcessMode.CHUNK == processMode) {
             // 分块模式：解析分块策略和配置
@@ -178,7 +178,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
             if (request == null || !StringUtils.hasText(request.getPipelineId())) {
                 throw new ClientException("使用Pipeline模式时，必须指定Pipeline ID");
             }
-            pipelineId = Long.parseLong(request.getPipelineId());
+            pipelineId = request.getPipelineId();
             // 验证Pipeline是否存在
             try {
                 ingestionPipelineService.get(request.getPipelineId());
@@ -188,7 +188,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         }
 
         KnowledgeDocumentDO documentDO = KnowledgeDocumentDO.builder()
-                .kbId(Long.parseLong(kbId))
+                .kbId(kbId)
                 .docName(stored.getOriginalFilename())
                 .enabled(1)
                 .chunkCount(0)
@@ -329,7 +329,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         return chunks.size();
     }
 
-    private void markChunkSuccess(Long docId, int chunkCount) {
+    private void markChunkSuccess(String docId, int chunkCount) {
         KnowledgeDocumentDO update = new KnowledgeDocumentDO();
         update.setId(docId);
         update.setChunkCount(chunkCount);
@@ -338,7 +338,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         docMapper.updateById(update);
     }
 
-    private void updateChunkLog(Long logId, String status, int chunkCount, long extractDuration,
+    private void updateChunkLog(String logId, String status, int chunkCount, long extractDuration,
                                 long chunkDuration, long embeddingDuration, long totalDuration,
                                 String errorMessage) {
         KnowledgeDocumentChunkLogDO update = new KnowledgeDocumentChunkLogDO();
@@ -386,7 +386,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
      */
     private List<VectorChunk> runPipelineProcess(KnowledgeDocumentDO documentDO) {
         String docId = String.valueOf(documentDO.getId());
-        Long pipelineId = documentDO.getPipelineId();
+        String pipelineId = documentDO.getPipelineId();
 
         if (pipelineId == null) {
             throw new IllegalStateException("Pipeline模式下Pipeline ID为空：docId=" + docId);
@@ -397,7 +397,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
             throw new IllegalStateException("知识库不存在：kbId=" + documentDO.getKbId());
         }
 
-        PipelineDefinition pipelineDef = ingestionPipelineService.getDefinition(String.valueOf(pipelineId));
+        PipelineDefinition pipelineDef = ingestionPipelineService.getDefinition(pipelineId);
 
         byte[] fileBytes;
         try (InputStream is = fileStorageService.openStream(documentDO.getFileUrl())) {
@@ -408,7 +408,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
 
         IngestionContext context = IngestionContext.builder()
                 .taskId(docId)
-                .pipelineId(String.valueOf(pipelineId))
+                .pipelineId(pipelineId)
                 .rawBytes(fileBytes)
                 .mimeType(documentDO.getFileType())
                 .vectorSpaceId(VectorSpaceId.builder()
@@ -438,7 +438,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         runChunkTask(documentDO);
     }
 
-    private void markChunkFailed(Long docId) {
+    private void markChunkFailed(String docId) {
         TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
         txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         txTemplate.executeWithoutResult(status -> {
@@ -526,7 +526,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
             return records;
         }
 
-        Set<Long> kbIds = new HashSet<>();
+        Set<String> kbIds = new HashSet<>();
         for (KnowledgeDocumentSearchVO record : records) {
             if (record.getKbId() != null) {
                 kbIds.add(record.getKbId());
@@ -537,7 +537,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         }
 
         List<KnowledgeBaseDO> bases = kbMapper.selectByIds(kbIds);
-        Map<Long, String> nameMap = new HashMap<>();
+        Map<String, String> nameMap = new HashMap<>();
         if (bases != null) {
             for (KnowledgeBaseDO base : bases) {
                 nameMap.put(base.getId(), base.getName());
@@ -574,6 +574,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
                         return VectorChunk.builder()
                                 .chunkId(each.getId())
                                 .content(each.getContent())
+                                .index(each.getChunkIndex())
                                 .embedding(toArray(embed))
                                 .build();
                     })
@@ -594,9 +595,9 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
         IPage<KnowledgeDocumentChunkLogDO> result = chunkLogMapper.selectPage(mpPage, qw);
 
         List<KnowledgeDocumentChunkLogDO> records = result.getRecords();
-        Map<Long, String> pipelineNameMap = new HashMap<>();
+        Map<String, String> pipelineNameMap = new HashMap<>();
         if (CollUtil.isNotEmpty(records)) {
-            Set<Long> pipelineIds = new HashSet<>();
+            Set<String> pipelineIds = new HashSet<>();
             for (KnowledgeDocumentChunkLogDO record : records) {
                 if (record.getPipelineId() != null) {
                     pipelineIds.add(record.getPipelineId());
@@ -639,7 +640,7 @@ public class KnowledgeDocumentServiceImpl implements KnowledgeDocumentService {
                 : totalDuration - extract - chunk - embedding;
     }
 
-    private String resolveEmbeddingModel(Long kbId) {
+    private String resolveEmbeddingModel(String kbId) {
         if (kbId == null) {
             return null;
         }

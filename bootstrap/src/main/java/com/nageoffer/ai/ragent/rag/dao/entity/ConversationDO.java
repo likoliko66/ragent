@@ -38,7 +38,7 @@ import java.util.Date;
 public class ConversationDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     private String conversationId;
 

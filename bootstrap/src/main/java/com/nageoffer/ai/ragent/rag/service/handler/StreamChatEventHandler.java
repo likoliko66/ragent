@@ -105,7 +105,7 @@ public class StreamChatEventHandler implements StreamCallback {
      */
     private CompletionPayload buildCompletionPayloadOnCancel() {
         String content = answer.toString();
-        Long messageId = null;
+        String messageId = null;
         if (StrUtil.isNotBlank(content)) {
             messageId = memoryService.append(conversationId, userId, ChatMessage.assistant(content));
         }
@@ -141,10 +141,10 @@ public class StreamChatEventHandler implements StreamCallback {
         if (taskManager.isCancelled(taskId)) {
             return;
         }
-        Long messageId = memoryService.append(conversationId, UserContext.getUserId(),
+        String messageId = memoryService.append(conversationId, UserContext.getUserId(),
                 ChatMessage.assistant(answer.toString()));
         String title = resolveTitleForEvent();
-        String messageIdText = messageId == null ? null : String.valueOf(messageId);
+        String messageIdText = StrUtil.isBlank(messageId)? null : messageId;
         sender.sendEvent(SSEEventType.FINISH.value(), new CompletionPayload(messageIdText, title));
         sender.sendEvent(SSEEventType.DONE.value(), "[DONE]");
         taskManager.unregister(taskId);

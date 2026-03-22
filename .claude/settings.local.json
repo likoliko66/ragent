@@ -32,7 +32,10 @@
       "Bash(mvn dependency:tree -pl framework)",
       "Bash(jar tf:*)",
       "Bash(javap:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(/Users/machen/workspace/nageoffer/ragent/resources/database/schema_pg.sql:*)",
+      "Bash(psql:*)",
+      "Bash(/tmp/alter_ids.sql:*)"
     ]
   }
 }

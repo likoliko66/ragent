@@ -41,12 +41,12 @@ import java.util.Date;
 public class KnowledgeDocumentDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 所属知识库 ID
      */
-    private Long kbId;
+    private String kbId;
 
     /**
      * 文档名称
@@ -115,13 +115,14 @@ public class KnowledgeDocumentDO {
      * 分块参数配置（JSON）
      * 仅在 processMode=chunk 时有效
      */
+    @TableField(typeHandler = com.nageoffer.ai.ragent.knowledge.dao.handler.JsonbTypeHandler.class)
     private String chunkConfig;
 
     /**
      * 数据通道（Pipeline）ID
      * 仅在 processMode=pipeline 时有效
      */
-    private Long pipelineId;
+    private String pipelineId;
 
     /**
      * 状态：

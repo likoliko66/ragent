@@ -44,7 +44,7 @@ public interface ConversationMemoryStore {
      * @param message        要追加的消息
      * @return 消息ID（可能为空）
      */
-    Long append(String conversationId, String userId, ChatMessage message);
+    String append(String conversationId, String userId, ChatMessage message);
 
     /**
      * 刷新对话缓存

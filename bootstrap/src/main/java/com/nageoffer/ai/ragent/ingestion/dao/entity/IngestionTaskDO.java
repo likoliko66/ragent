@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.nageoffer.ai.ragent.knowledge.dao.handler.JsonbTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,12 +45,12 @@ public class IngestionTaskDO {
      * 主键 ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 管道 ID
      */
-    private Long pipelineId;
+    private String pipelineId;
 
     /**
      * 数据源类型 (如: file, url, feishu, s3)
@@ -84,11 +85,13 @@ public class IngestionTaskDO {
     /**
      * 日志 JSON
      */
+    @TableField(typeHandler = JsonbTypeHandler.class)
     private String logsJson;
 
     /**
      * 元数据 JSON
      */
+    @TableField(typeHandler = JsonbTypeHandler.class)
     private String metadataJson;
 
     /**

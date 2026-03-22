@@ -114,7 +114,7 @@ public class SampleQuestionServiceImpl implements SampleQuestionService {
         List<SampleQuestionDO> records = sampleQuestionMapper.selectList(
                 Wrappers.lambdaQuery(SampleQuestionDO.class)
                         .eq(SampleQuestionDO::getDeleted, 0)
-                        .last("ORDER BY RAND() LIMIT " + DEFAULT_LIMIT)
+                        .last("ORDER BY RANDOM() LIMIT " + DEFAULT_LIMIT)
         );
         if (records == null || records.isEmpty()) {
             return List.of();
@@ -125,25 +125,13 @@ public class SampleQuestionServiceImpl implements SampleQuestionService {
     }
 
     private SampleQuestionDO loadById(String id) {
-        Long parsedId = parseId(id);
         SampleQuestionDO record = sampleQuestionMapper.selectOne(
                 Wrappers.lambdaQuery(SampleQuestionDO.class)
-                        .eq(SampleQuestionDO::getId, parsedId)
+                        .eq(SampleQuestionDO::getId, id)
                         .eq(SampleQuestionDO::getDeleted, 0)
         );
         Assert.notNull(record, () -> new ClientException("示例问题不存在"));
         return record;
-    }
-
-    private Long parseId(String id) {
-        if (StrUtil.isBlank(id)) {
-            throw new ClientException("示例问题ID不能为空");
-        }
-        try {
-            return Long.parseLong(id);
-        } catch (NumberFormatException ex) {
-            throw new ClientException("示例问题ID非法");
-        }
     }
 
     private SampleQuestionVO toVO(SampleQuestionDO record) {

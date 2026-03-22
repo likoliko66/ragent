@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.nageoffer.ai.ragent.knowledge.dao.handler.JsonbTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,12 +45,12 @@ public class IngestionPipelineNodeDO {
      * ID
      */
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 流水线ID
      */
-    private Long pipelineId;
+    private String pipelineId;
 
     /**
      * 节点ID
@@ -69,11 +70,13 @@ public class IngestionPipelineNodeDO {
     /**
      * 设置详情JSON
      */
+    @TableField(typeHandler = JsonbTypeHandler.class)
     private String settingsJson;
 
     /**
      * 条件详情JSON
      */
+    @TableField(typeHandler = JsonbTypeHandler.class)
     private String conditionJson;
 
     /**

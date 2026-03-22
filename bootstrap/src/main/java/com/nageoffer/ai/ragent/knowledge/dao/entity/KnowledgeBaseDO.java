@@ -41,7 +41,7 @@ import java.util.Date;
 public class KnowledgeBaseDO {
 
     @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     /**
      * 知识库名称
