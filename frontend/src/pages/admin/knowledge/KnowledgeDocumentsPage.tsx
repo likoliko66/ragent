@@ -53,7 +53,6 @@ const PROCESS_MODE_OPTIONS = [
   { value: "pipeline", label: "数据通道" }
 ];
 
-const INT_MAX = 2147483647;
 const NO_CHUNK_VALUE = -1;
 
 const parseChunkConfig = (raw?: string | null): Record<string, unknown> => {
@@ -67,18 +66,6 @@ const parseChunkConfig = (raw?: string | null): Record<string, unknown> => {
   } catch {
     return {};
   }
-};
-
-const getConfigNumber = (config: Record<string, unknown>, key: string, fallback: number) => {
-  const value = config[key];
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return value;
-  }
-  if (typeof value === "string" && value.trim() !== "") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : fallback;
-  }
-  return fallback;
 };
 
 const statusDotClass = (status?: string | null) => {
@@ -111,13 +98,6 @@ const formatSourceLabel = (sourceType?: string | null) => {
   if (normalized === "url") return "Remote URL";
   if (normalized === "file") return "Local File";
   return "-";
-};
-
-const formatProcessMode = (processMode?: string | null) => {
-  const normalized = processMode?.toLowerCase();
-  if (normalized === "pipeline") return "数据通道";
-  if (normalized === "chunk") return "直接分块";
-  return "直接分块";
 };
 
 const formatChunkStrategy = (strategy?: string | null) => {
@@ -797,83 +777,71 @@ export function KnowledgeDocumentsPage() {
                 const isPipelineLog = log.processMode?.toLowerCase() === "pipeline";
                 const chunkLabel = isPipelineLog ? "数据通道耗时" : "分块耗时";
                 return (
-                <div key={log.id} className="rounded-lg border p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">执行状态:</span>
-                    <span className={cn(
-                      "text-sm font-medium",
-                      log.status === "success" ? "text-emerald-600" :
-                      log.status === "failed" ? "text-red-600" :
-                      "text-amber-600"
-                    )}>
-                      {formatLogStatus(log.status)}
-                    </span>
+                <div key={log.id} className="space-y-4">
+                  {/* 状态 + 基本信息 */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className={cn(
+                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+                        log.status === "success" ? "bg-emerald-50 text-emerald-700" :
+                        log.status === "failed" ? "bg-red-50 text-red-700" :
+                        "bg-amber-50 text-amber-700"
+                      )}>
+                        {formatLogStatus(log.status)}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {log.processMode === "pipeline" ? "数据通道" : "直接分块"}
+                        {log.processMode === "chunk" && log.chunkStrategy ? ` · ${formatChunkStrategy(log.chunkStrategy)}` : ""}
+                        {log.processMode === "pipeline" && (log.pipelineName || log.pipelineId) ? ` · ${log.pipelineName || log.pipelineId}` : ""}
+                      </span>
+                    </div>
+                    <span className="text-2xl font-semibold tabular-nums">{log.chunkCount ?? 0} <span className="text-sm font-normal text-muted-foreground">块</span></span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">处理模式: </span>
-                      <span>{log.processMode === "pipeline" ? "数据通道" : "直接分块"}</span>
-                    </div>
-                    {log.processMode === "chunk" && log.chunkStrategy && (
-                      <div>
-                        <span className="text-muted-foreground">切分方式: </span>
-                        <span>{formatChunkStrategy(log.chunkStrategy)}</span>
-                      </div>
-                    )}
-                    {log.processMode === "pipeline" && log.pipelineId && (
-                      <div>
-                        <span className="text-muted-foreground">数据通道: </span>
-                        <span>{log.pipelineName || log.pipelineId}</span>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-muted-foreground">分块数量: </span>
-                      <span className="font-medium">{log.chunkCount ?? "-"}</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  {/* 耗时指标卡片 */}
+                  <div className={cn("grid gap-3", isPipelineLog ? "grid-cols-2 md:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
                     {!isPipelineLog && (
-                      <div>
-                        <span className="text-muted-foreground">文本提取: </span>
-                        <span className="font-medium">{formatDuration(log.extractDuration)}</span>
+                      <div className="rounded-lg border bg-slate-50/50 p-3">
+                        <div className="text-xs text-muted-foreground mb-1">文本提取</div>
+                        <div className="text-lg font-semibold tabular-nums">{formatDuration(log.extractDuration)}</div>
                       </div>
                     )}
-                    <div>
-                      <span className="text-muted-foreground">{chunkLabel}: </span>
-                      <span className="font-medium">{formatDuration(log.chunkDuration)}</span>
+                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                      <div className="text-xs text-muted-foreground mb-1">{chunkLabel}</div>
+                      <div className="text-lg font-semibold tabular-nums">{formatDuration(log.chunkDuration)}</div>
                     </div>
                     {!isPipelineLog && (
-                      <div>
-                        <span className="text-muted-foreground">向量化: </span>
-                        <span className="font-medium">{formatDuration(log.embedDuration)}</span>
+                      <div className="rounded-lg border bg-slate-50/50 p-3">
+                        <div className="text-xs text-muted-foreground mb-1">向量化</div>
+                        <div className="text-lg font-semibold tabular-nums">{formatDuration(log.embedDuration)}</div>
                       </div>
                     )}
-                    <div>
-                      <span className="text-muted-foreground">持久化: </span>
-                      <span className="font-medium">{formatDuration(log.persistDuration)}</span>
+                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                      <div className="text-xs text-muted-foreground mb-1">持久化</div>
+                      <div className="text-lg font-semibold tabular-nums">{formatDuration(log.persistDuration)}</div>
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">其他耗时: </span>
-                      <span className="font-medium">{formatDuration(log.otherDuration)}</span>
+                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                      <div className="text-xs text-muted-foreground mb-1">其他</div>
+                      <div className="text-lg font-semibold tabular-nums">{formatDuration(log.otherDuration)}</div>
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">总耗时: </span>
-                      <span className="font-semibold text-blue-600">{formatDuration(log.totalDuration)}</span>
+                    <div className="rounded-lg border bg-blue-50 p-3">
+                      <div className="text-xs text-blue-600 mb-1">总耗时</div>
+                      <div className="text-lg font-bold tabular-nums text-blue-600">{formatDuration(log.totalDuration)}</div>
                     </div>
                   </div>
 
-                  <div className="border-t pt-3 flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>执行时间:</span>
-                    <span>{formatDate(log.startTime)}</span>
+                  {/* 执行时间 */}
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <span>执行时间</span>
+                    <span className="tabular-nums text-slate-700">{formatDate(log.startTime)}</span>
                     <span>~</span>
-                    <span>{log.endTime ? formatDate(log.endTime) : "进行中"}</span>
+                    <span className="tabular-nums text-slate-700">{log.endTime ? formatDate(log.endTime) : "进行中"}</span>
                   </div>
 
+                  {/* 错误信息 */}
                   {log.errorMessage && (
-                    <div className="rounded bg-red-50 p-3 text-sm text-red-600">
-                      <div className="font-medium mb-1">错误信息:</div>
+                    <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                      <div className="font-medium mb-1">错误信息</div>
                       <div className="text-xs">{log.errorMessage}</div>
                     </div>
                   )}
