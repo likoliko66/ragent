@@ -62,6 +62,9 @@ public class OllamaEmbeddingClient implements EmbeddingClient {
         JsonObject body = new JsonObject();
         body.addProperty("model", requireModel(target));
         body.addProperty("input", text);
+        if (target.candidate().getDimension() != null) {
+            body.addProperty("dimensions", target.candidate().getDimension());
+        }
 
         Request request = new Request.Builder()
                 .url(url)
