@@ -170,8 +170,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>17</release>
                     <encoding>UTF-8</encoding>
                     <parameters>true</parameters>
                 </configuration>
@@ -193,7 +192,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+                    <argLine>@{argLine} -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito-core.version}/mockito-core-${mockito-core.version}.jar</argLine>
                 </configuration>
             </plugin>
 
@@ -204,7 +203,6 @@
                 <configuration>
                     <java>
                         <licenseHeader>
-                            <!-- ${maven.multiModuleProjectDirectory} 爆红属于正常，并不影响编译或者运行，忽略就好 -->
                             <file>${maven.multiModuleProjectDirectory}/resources/format/copyright.txt</file>
                         </licenseHeader>
                     </java>
